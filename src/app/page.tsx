@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import ProductCard from "@/components/ProductCard";
 import { getNewProducts, getBestsellers, collections } from "@/data/products";
+import { useCatalog } from "@/lib/catalog-context";
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -14,8 +15,9 @@ const fadeUp = {
 };
 
 export default function HomePage() {
-  const newProducts = getNewProducts().slice(0, 4);
-  const bestsellers = getBestsellers();
+  const catalog = useCatalog();
+  const newProducts = getNewProducts(catalog).slice(0, 4);
+  const bestsellers = getBestsellers(catalog);
 
   return (
     <>

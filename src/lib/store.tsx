@@ -11,6 +11,7 @@ export interface CartItem {
   price: number;
   quantity: number;
   image: string;
+  variantId?: string;
 }
 
 export interface WishlistItem {
@@ -32,6 +33,9 @@ interface StoreState {
   removeFromCart: (productId: string, color: string, size: string) => void;
   updateQuantity: (productId: string, color: string, size: string, quantity: number) => void;
   clearCart: () => void;
+  startCheckout: () => Promise<void>;
+  isCheckingOut: boolean;
+  checkoutError: string | null;
   cartCount: number;
   cartTotal: number;
   toggleCart: () => void;
@@ -53,6 +57,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const addToCart = useCallback((item: Omit<CartItem, "quantity">) => {
     setCart((prev) => {
@@ -98,6 +104,30 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const clearCart = useCallback(() => setCart([]), []);
 
+  const startCheckout = useCallback(async () => {
+    if (cart.length === 0 || cart.some((i) => !i.variantId)) {
+      window.location.assign("/checkout");
+      return;
+    }
+    setIsCheckingOut(true);
+    setCheckoutError(null);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lines: cart.map((i) => ({ variantId: i.variantId, quantity: i.quantity })),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.checkoutUrl) throw new Error(data.error ?? "Checkout failed");
+      window.location.assign(data.checkoutUrl);
+    } catch (e) {
+      setCheckoutError(e instanceof Error ? e.message : "Checkout failed");
+      setIsCheckingOut(false);
+    }
+  }, [cart]);
+
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -136,6 +166,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         removeFromCart,
         updateQuantity,
         clearCart,
+        startCheckout,
+        isCheckingOut,
+        checkoutError,
         cartCount,
         cartTotal,
         toggleCart,

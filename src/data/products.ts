@@ -4,6 +4,7 @@ export interface ProductVariant {
   sizes: {
     size: string;
     inStock: boolean;
+    variantId?: string;
   }[];
   images: string[];
 }
@@ -827,26 +828,26 @@ export const drops = [
   },
 ];
 
-export function getProductBySlug(slug: string): Product | undefined {
-  return products.find((p) => p.slug === slug);
+export function getProductBySlug(slug: string, list: Product[] = products): Product | undefined {
+  return list.find((p) => p.slug === slug);
 }
 
-export function getProductsByCollection(collection: string): Product[] {
-  return products.filter(
+export function getProductsByCollection(collection: string, list: Product[] = products): Product[] {
+  return list.filter(
     (p) => p.collection.toLowerCase() === collection.toLowerCase()
   );
 }
 
-export function getProductsByDrop(dropNumber: string): Product[] {
-  return products.filter((p) => p.dropNumber === dropNumber);
+export function getProductsByDrop(dropNumber: string, list: Product[] = products): Product[] {
+  return list.filter((p) => p.dropNumber === dropNumber);
 }
 
-export function getBestsellers(): Product[] {
-  return products.filter((p) => p.isBestseller);
+export function getBestsellers(list: Product[] = products): Product[] {
+  return list.filter((p) => p.isBestseller);
 }
 
-export function getNewProducts(): Product[] {
-  return products.filter((p) => p.isNew);
+export function getNewProducts(list: Product[] = products): Product[] {
+  return list.filter((p) => p.isNew);
 }
 
 export function formatPrice(price: number): string {

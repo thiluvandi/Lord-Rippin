@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const FREE_SHIPPING_THRESHOLD = 3999;
 
 export default function CartDrawer() {
-  const { cart, isCartOpen, setCartOpen, removeFromCart, updateQuantity, cartTotal } = useStore();
+  const { cart, isCartOpen, setCartOpen, removeFromCart, updateQuantity, cartTotal, startCheckout, isCheckingOut, checkoutError } = useStore();
 
   const freeShippingReached = cartTotal >= FREE_SHIPPING_THRESHOLD;
 
@@ -146,13 +146,16 @@ export default function CartDrawer() {
                   <span className="text-[14px] font-mono">{formatPrice(cartTotal)}</span>
                 </div>
 
-                <Link
-                  href="/checkout"
-                  onClick={() => setCartOpen(false)}
-                  className="block w-full bg-foreground text-white text-center py-3.5 text-[12px] tracking-[0.15em] uppercase hover:bg-accent transition-colors duration-300"
+                <button
+                  onClick={startCheckout}
+                  disabled={isCheckingOut}
+                  className="block w-full bg-foreground text-white text-center py-3.5 text-[12px] tracking-[0.15em] uppercase hover:bg-accent transition-colors duration-300 disabled:opacity-60"
                 >
-                  Checkout
-                </Link>
+                  {isCheckingOut ? "Redirecting..." : "Checkout"}
+                </button>
+                {checkoutError && (
+                  <p className="text-[11px] text-center text-accent">{checkoutError}</p>
+                )}
 
                 <Link
                   href="/cart"

@@ -8,7 +8,7 @@ import { formatPrice } from "@/data/products";
 const FREE_SHIPPING_THRESHOLD = 3999;
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity, cartTotal } = useStore();
+  const { cart, removeFromCart, updateQuantity, cartTotal, startCheckout, isCheckingOut, checkoutError } = useStore();
   const freeShippingReached = cartTotal >= FREE_SHIPPING_THRESHOLD;
 
   return (
@@ -95,12 +95,16 @@ export default function CartPage() {
 
             <p className="text-[11px] text-muted">Shipping calculated at checkout.</p>
 
-            <Link
-              href="/checkout"
-              className="block w-full bg-foreground text-white text-center py-3.5 text-[12px] tracking-[0.15em] uppercase hover:bg-accent transition-colors"
+            <button
+              onClick={startCheckout}
+              disabled={isCheckingOut}
+              className="block w-full bg-foreground text-white text-center py-3.5 text-[12px] tracking-[0.15em] uppercase hover:bg-accent transition-colors disabled:opacity-60"
             >
-              Checkout
-            </Link>
+              {isCheckingOut ? "Redirecting..." : "Checkout"}
+            </button>
+            {checkoutError && (
+              <p className="text-[11px] text-center text-accent">{checkoutError}</p>
+            )}
 
             <Link
               href="/shop"

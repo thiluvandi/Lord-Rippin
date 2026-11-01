@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { motion } from "framer-motion";
 import ProductCard from "@/components/ProductCard";
 import { collections, getProductsByCollection } from "@/data/products";
+import { useCatalog } from "@/lib/catalog-context";
 
 export default function CollectionPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -13,7 +14,8 @@ export default function CollectionPage({ params }: { params: Promise<{ slug: str
 
   if (!collection) notFound();
 
-  const collectionProducts = getProductsByCollection(collection.name);
+  const catalog = useCatalog();
+  const collectionProducts = getProductsByCollection(collection.name, catalog);
 
   return (
     <>

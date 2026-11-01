@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import ProductCard from "@/components/ProductCard";
 import { getProductsByDrop, drops } from "@/data/products";
+import { useCatalog } from "@/lib/catalog-context";
 
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
@@ -14,7 +15,8 @@ const fadeUp = {
 
 export default function DropPage() {
   const currentDrop = drops[0];
-  const dropProducts = getProductsByDrop(currentDrop.number);
+  const catalog = useCatalog();
+  const dropProducts = getProductsByDrop(currentDrop.number, catalog);
 
   return (
     <>

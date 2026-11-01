@@ -5,13 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { motion } from "framer-motion";
-import { getProductBySlug, products, formatPrice } from "@/data/products";
+import { getProductBySlug, formatPrice } from "@/data/products";
+import { useCatalog } from "@/lib/catalog-context";
 import { useStore } from "@/lib/store";
 import ProductCard from "@/components/ProductCard";
 
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const product = getProductBySlug(slug);
+  const products = useCatalog();
+  const product = getProductBySlug(slug, products);
 
   if (!product) notFound();
 
@@ -34,6 +36,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
       size: selectedSize,
       price: product.price,
       image: variant.images[0],
+      variantId: variant.sizes.find((s) => s.size === selectedSize)?.variantId,
     });
   };
 

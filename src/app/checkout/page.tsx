@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useStore } from "@/lib/store";
@@ -17,12 +17,25 @@ const states = [
 ];
 
 export default function CheckoutPage() {
-  const { cart, cartTotal } = useStore();
+  const { cart, cartTotal, startCheckout, checkoutError } = useStore();
   const [step, setStep] = useState<"info" | "payment">("info");
   const [paymentMethod, setPaymentMethod] = useState("upi");
 
+  const shopifyCart = cart.length > 0 && cart.every((i) => i.variantId);
+  useEffect(() => {
+    if (shopifyCart) startCheckout();
+  }, [shopifyCart, startCheckout]);
+
   const shipping = cartTotal >= 3999 ? 0 : 149;
   const total = cartTotal + shipping;
+
+  if (shopifyCart) {
+    return (
+      <div className="max-w-[560px] mx-auto px-6 py-20 text-center">
+        <p className="text-[13px] font-mono tracking-[0.15em] text-muted">{checkoutError ?? "Redirecting to secure checkout..."}</p>
+      </div>
+    );
+  }
 
   if (cart.length === 0) {
     return (

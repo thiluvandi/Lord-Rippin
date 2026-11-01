@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/data/products";
+import { useCatalog } from "@/lib/catalog-context";
 
 const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
 const colorOptions = ["Black", "White", "Grey", "Bone", "Charcoal"];
@@ -16,6 +16,7 @@ const sortOptions = [
 ];
 
 export default function ShopPage() {
+  const products = useCatalog();
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedCollection, setSelectedCollection] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState("newest");

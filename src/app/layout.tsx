@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { StoreProvider } from "@/lib/store";
+import { CatalogProvider } from "@/lib/catalog-context";
+import { getCatalog } from "@/lib/catalog";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MobileMenu from "@/components/MobileMenu";
@@ -38,13 +40,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const products = await getCatalog();
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-white text-foreground">
+        <CatalogProvider products={products}>
         <StoreProvider>
           <Header />
           <MobileMenu />
@@ -53,6 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <main className="flex-1 pt-[72px]">{children}</main>
           <Footer />
         </StoreProvider>
+        </CatalogProvider>
       </body>
     </html>
   );

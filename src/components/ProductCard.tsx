@@ -30,6 +30,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
         size: availableSize.size,
         price: product.price,
         image: variant.images[0],
+        variantId: availableSize.variantId,
       });
     }
   };

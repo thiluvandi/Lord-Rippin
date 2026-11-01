@@ -4,13 +4,15 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useStore } from "@/lib/store";
-import { products, formatPrice, collections } from "@/data/products";
+import { formatPrice, collections } from "@/data/products";
+import { useCatalog } from "@/lib/catalog-context";
 import { motion, AnimatePresence } from "framer-motion";
 
 const popularSearches = ["Graphic Tees", "Oversized", "Black", "Essentials", "After Hours"];
 
 export default function SearchOverlay() {
   const { isSearchOpen, setSearchOpen } = useStore();
+  const products = useCatalog();
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
